@@ -5,7 +5,7 @@ import { readPost, unloadPost } from '../../modules/post';
 import { setOriginalPost } from '../../modules/write';
 import PostViewer from '../../components/post/PostViewer';
 import PostActionButtons from '../../components/post/PostActionButtons';
-import user from '../../modules/user';
+import { removePost } from '../../lib/api/posts';
 
 const PostViewerContainer = () => {
   const params = useParams();
@@ -37,6 +37,15 @@ const PostViewerContainer = () => {
     navigate('/write');
   };
 
+  const onRemove = async () => {
+    try {
+      await removePost(postId);
+      navigate('/'); // 홈으로 이동
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const ownPost = (user && user._id) === (post && post.user._id);
 
   return (
@@ -44,7 +53,9 @@ const PostViewerContainer = () => {
       post={post}
       loading={loading}
       error={error}
-      actionButtons={ownPost && <PostActionButtons onEdit={onEdit} />}
+      actionButtons={
+        ownPost && <PostActionButtons onEdit={onEdit} onRemove={onRemove} />
+      }
     />
   );
 };
